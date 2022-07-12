@@ -3,7 +3,7 @@ use log::{LevelFilter, debug};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 use redis_protocol::resp2::prelude::*;
-use bytes::{Bytes};
+use bytes::{Bytes, BytesMut};
 
 use std::env;
 use std::error::Error;
@@ -56,8 +56,40 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     Ok(None) => panic!("Incomplete frame."),
                     Err(e) => panic!("Error parsing bytes: {:?}", e)
                 };
-                debug!("Parsed frame {:?} and consumed {} bytes", frame, consumed);
-  
+                debug!("Parsed frame {:?} and consumed {} bytes", &frame, consumed);
+                match &frame {
+                    Frame::SimpleString(_) => todo!(),
+                    Frame::Error(_) => todo!(),
+                    Frame::Integer(_) => todo!(),
+                    Frame::BulkString(_) => todo!(),
+                    Frame::Array(array) => {
+                        for f in array {
+                            match f {
+                                Frame::SimpleString(_) => todo!(),
+                                Frame::Error(_) => todo!(),
+                                Frame::Integer(_) => todo!(),
+                                Frame::BulkString(_) => {
+                                    let frame = Frame::BulkString("PONG".into());
+                                    let mut buf = BytesMut::new();
+                                    
+                                    let _len = match encode_bytes(&mut buf, &frame) {
+                                        Ok(l) => l,
+                                        Err(e) => panic!("Error encoding frame: {:?}", e)
+                                    };
+                                    socket
+                                        .write_all(&buf)
+                                        .await
+                                        .expect("failed to write data to socket");
+                                    
+                                    debug!("write socket {:#?}", &buf);
+                                },
+                                Frame::Array(_) => todo!(),
+                                Frame::Null => todo!(),
+                            }
+                        }
+                    },
+                    Frame::Null => todo!(),
+                }
                 // debug!("debug {}", std::str::from_utf8(&buf[0..n]).unwrap());
             }
         });
