@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/buhe/code/gitHub/redis-on-blockchain/redis-bridge/target/debug/build/typenum-5f00231cc8b28fea/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/Users/buhe/code/gitHub/redis-on-blockchain/redis-bridge/target/debug/build/typenum-5f00231cc8b28fea/out/op.rs
