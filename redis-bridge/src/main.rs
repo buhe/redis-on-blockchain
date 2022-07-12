@@ -2,6 +2,8 @@ use env_logger::Builder;
 use log::{LevelFilter, debug};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
+use redis_protocol::resp2::prelude::*;
+use bytes::{Bytes};
 
 use std::env;
 use std::error::Error;
@@ -48,12 +50,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     return;
                 }
 
-                // socket
-                //     .write_all(&buf[0..n])
-                //     .await
-                //     .expect("failed to write data to socket");
-
-                debug!("{}", std::str::from_utf8(&buf[0..n]).unwrap());
+                let b: Bytes = Bytes::copy_from_slice(&buf[0..n]);
+                let (frame, consumed) = match decode(&b) {
+                    Ok(Some((f, c))) => (f, c),
+                    Ok(None) => panic!("Incomplete frame."),
+                    Err(e) => panic!("Error parsing bytes: {:?}", e)
+                };
+                debug!("Parsed frame {:?} and consumed {} bytes", frame, consumed);
+  
+                // debug!("debug {}", std::str::from_utf8(&buf[0..n]).unwrap());
             }
         });
     }
