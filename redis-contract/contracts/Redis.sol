@@ -6,16 +6,16 @@ import "hardhat/console.sol";
 
 contract Redis {
 
-    // event Wi(uint amount, uint when);
-    mapping(string => string) private str_kv;
+    mapping(address => mapping(string => string)) private str_kv;
     constructor() {
     }
 
-    function set(string memory key, string memory value) public {
-        str_kv[key] = value;
+    function set(address owner, string memory key, string memory value) public {
+        require(owner != address(0), "redis: address zero is not a valid owner");
+        str_kv[owner][key] = value;
     }
 
-    function get(string memory key) public view returns (string memory) {
-        return str_kv[key];
+    function get(address owner, string memory key) public view returns (string memory) {
+        return str_kv[owner][key];
     }
 }
