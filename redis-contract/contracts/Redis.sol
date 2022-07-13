@@ -10,12 +10,11 @@ contract Redis {
     constructor() {
     }
 
-    function set(address owner, string memory key, string memory value) public {
-        require(owner != address(0), "redis: address zero is not a valid owner");
-        str_kv[owner][key] = value;
+    function set(string memory key, string memory value) public {
+        str_kv[msg.sender][key] = value;
     }
 
-    function get(address owner, string memory key) public view returns (string memory) {
-        return str_kv[owner][key];
+    function get(string memory key) public view returns (string memory) {
+        return str_kv[msg.sender][key];
     }
 }
