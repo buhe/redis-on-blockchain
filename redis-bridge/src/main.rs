@@ -1,3 +1,5 @@
+use commands::Command;
+use commands::connection::Ping;
 use env_logger::Builder;
 use failure::Error;
 use log::{LevelFilter, debug, error};
@@ -5,9 +7,10 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
 use redis_protocol::resp2::prelude::*;
 use bytes::{Bytes, BytesMut};
-use futures::future::{BoxFuture, FutureExt};
 use async_recursion::async_recursion;
 use std::env;
+
+mod commands;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -59,22 +62,22 @@ async fn main() -> Result<(), Error> {
                 };
                 debug!("Parsed frame {:?} and consumed {} bytes", &frame, consumed);
                 match &frame {
-                    Frame::SimpleString(_) => {
-                        handle_simple_string(&frame, &socket).await;
-                    },
-                    Frame::Error(_) => {
-                        handle_error(&frame, &socket).await;
-                    },
-                    Frame::Integer(i) => {
-                        handle_integer(i, &socket).await;
-                    },
-                    Frame::BulkString(_) => {
-                        handle_bluk_string(&frame, &mut socket).await;
-                    },
+                    // Frame::SimpleString(_) => {
+                    //     handle_simple_string(&frame, &socket).await;
+                    // },
+                    // Frame::Error(_) => {
+                    //     handle_error(&frame, &socket).await;
+                    // },
+                    // Frame::Integer(i) => {
+                    //     handle_integer(i, &socket).await;
+                    // },
+                    // Frame::BulkString(_) => {
+                    //     handle_bluk_string(&frame, &mut socket).await;
+                    // },
                     Frame::Array(array) => {
                         handle_array(array, &mut socket).await;
                     },
-                    Frame::Null => todo!(),
+                    _ => unreachable!(),
                 }
                 // debug!("debug {}", std::str::from_utf8(&buf[0..n]).unwrap());
             }
@@ -121,14 +124,20 @@ async fn handle_bluk_string(frame: &Frame, socket: &mut TcpStream) {
 
 #[async_recursion]
 async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
-    for frame in frames {
-        match frame {
-            Frame::SimpleString(_) => {handle_simple_string(frame, socket).await;},
-            Frame::Error(_) => {handle_error(frame, socket).await;},
-            Frame::Integer(i) => {handle_integer(i, socket).await;},
-            Frame::BulkString(_) => {handle_bluk_string(frame, socket).await;},
-            Frame::Array(array) => {handle_array(array, socket).await;},
-            Frame::Null => todo!(),
+    let commands = vec![Ping{}];
+    for c in commands {
+        if c.accept(frames) {
+            c.handle(socket).await;
         }
     }
+    // for frame in frames {
+    //     match frame {
+    //         Frame::SimpleString(_) => {handle_simple_string(frame, socket).await;},
+    //         Frame::Error(_) => {handle_error(frame, socket).await;},
+    //         Frame::Integer(i) => {handle_integer(i, socket).await;},
+    //         Frame::BulkString(_) => {handle_bluk_string(frame, socket).await;},
+    //         Frame::Array(array) => {handle_array(array, socket).await;},
+    //         Frame::Null => todo!(),
+    //     }
+    // }
 }
