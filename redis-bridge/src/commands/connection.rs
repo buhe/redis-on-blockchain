@@ -13,7 +13,13 @@ pub struct Ping {
 #[async_trait]
 impl Command for Ping {
     fn accept(&self, frames: &Vec<Frame>) -> bool {
-        for _frame in frames {
+        for frame in frames {
+            if frame.is_string() {
+                let str = frame.as_str().unwrap().to_string();
+                if str.to_lowercase() == "ping" {
+                    return true;
+                }
+            }
             // if frame./
         }
         // assert!(frame.is_array());
@@ -21,7 +27,7 @@ impl Command for Ping {
         //     array
         // };
         // // assert!()
-        true
+        false
     }
 
     async fn handle(&self, socket: &mut tokio::net::TcpStream) {
