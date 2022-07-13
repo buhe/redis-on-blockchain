@@ -12,7 +12,7 @@ pub struct Ping {
 
 #[async_trait]
 impl Command for Ping {
-    fn accept(&self, frames: &Vec<Frame>) -> bool {
+   fn accept(&self, frames: &Vec<Frame>) -> bool {
         for frame in frames {
             if frame.is_string() {
                 let str = frame.as_str().unwrap().to_string();
@@ -38,5 +38,29 @@ impl Command for Ping {
             .expect("failed to write data to socket");
         
         debug!("write socket {:#?}", &buf);
+    }
+
+    fn name(&self) -> String {
+        "ping".to_string()
+    }
+
+    fn arity(&self) -> i32 {
+        -1
+    }
+
+    fn flag(&self) -> Vec<String> {
+        vec!["stale".to_string(), "fast".to_string()]
+    }
+
+    fn first_key(&self) -> i32 {
+        0
+    }
+
+    fn last_key(&self) -> i32 {
+        0
+    }
+
+    fn step(&self) -> i32 {
+        0
     }
 }
