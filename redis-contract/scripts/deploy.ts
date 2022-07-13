@@ -13,6 +13,13 @@ async function main() {
   await lock.deployed();
 
   console.log("Lock with 1 ETH deployed to:", lock.address);
+
+  const Redis = await ethers.getContractFactory("Redis");
+  const redis = await Redis.deploy();
+
+  await redis.deployed();
+
+  console.log("Redis deployed to:", redis.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
