@@ -63,24 +63,11 @@ async fn main() -> Result<(), Error> {
                 };
                 debug!("Parsed frame {:?} and consumed {} bytes", &frame, consumed);
                 match &frame {
-                    // Frame::SimpleString(_) => {
-                    //     handle_simple_string(&frame, &socket).await;
-                    // },
-                    // Frame::Error(_) => {
-                    //     handle_error(&frame, &socket).await;
-                    // },
-                    // Frame::Integer(i) => {
-                    //     handle_integer(i, &socket).await;
-                    // },
-                    // Frame::BulkString(_) => {
-                    //     handle_bluk_string(&frame, &mut socket).await;
-                    // },
                     Frame::Array(array) => {
                         handle_array(array, &mut socket).await;
                     },
                     _ => unreachable!(),
                 }
-                // debug!("debug {}", std::str::from_utf8(&buf[0..n]).unwrap());
             }
         });
     }
