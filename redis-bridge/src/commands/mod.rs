@@ -3,6 +3,7 @@ use tokio::net::TcpStream;
 
 pub mod connection;
 pub mod server;
+pub mod string;
 use async_trait::async_trait;
 
 #[async_trait]
