@@ -20,13 +20,7 @@ impl Command for Ping {
                     return true;
                 }
             }
-            // if frame./
         }
-        // assert!(frame.is_array());
-        // let frames = frame == Frame::Array(array) {
-        //     array
-        // };
-        // // assert!()
         false
     }
 
