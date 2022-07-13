@@ -13,7 +13,7 @@ pub struct Ping {
 #[async_trait]
 impl Command for Ping {
     fn accept(&self, frames: &Vec<Frame>) -> bool {
-        for frame in frames {
+        for _frame in frames {
             // if frame./
         }
         // assert!(frame.is_array());

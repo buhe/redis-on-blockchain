@@ -2,11 +2,11 @@ use commands::Command;
 use commands::connection::Ping;
 use env_logger::Builder;
 use failure::Error;
-use log::{LevelFilter, debug, error};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use log::{LevelFilter, debug};
+use tokio::io::{AsyncReadExt};
 use tokio::net::{TcpListener, TcpStream};
 use redis_protocol::resp2::prelude::*;
-use bytes::{Bytes, BytesMut};
+use bytes::{Bytes};
 use async_recursion::async_recursion;
 use std::env;
 
@@ -92,35 +92,6 @@ pub fn init_logging(default_lvl: LevelFilter) {
     }
 }
 
-async fn handle_simple_string(frame: &Frame, socket: &TcpStream) {
-
-}
-
-async fn handle_error(frame: &Frame, socket: &TcpStream) {
-
-}
-
-async fn handle_integer(i: &i64,  socket: &TcpStream) {
-
-}
-
-async fn handle_bluk_string(frame: &Frame, socket: &mut TcpStream) {
-    let str = frame.as_str().unwrap().to_string();
-    let frame = Frame::BulkString("PONG".into());
-    let mut buf = BytesMut::new();
-    
-    let _len = match encode_bytes(&mut buf, &frame) {
-        Ok(l) => l,
-        Err(e) => panic!("Error encoding frame: {:?}", e)
-    };
-    socket
-        .write_all(&buf)
-        .await
-        .expect("failed to write data to socket");
-    
-    debug!("write socket {:#?}", &buf);
-}
-
 
 #[async_recursion]
 async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
@@ -130,14 +101,4 @@ async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
             c.handle(socket).await;
         }
     }
-    // for frame in frames {
-    //     match frame {
-    //         Frame::SimpleString(_) => {handle_simple_string(frame, socket).await;},
-    //         Frame::Error(_) => {handle_error(frame, socket).await;},
-    //         Frame::Integer(i) => {handle_integer(i, socket).await;},
-    //         Frame::BulkString(_) => {handle_bluk_string(frame, socket).await;},
-    //         Frame::Array(array) => {handle_array(array, socket).await;},
-    //         Frame::Null => todo!(),
-    //     }
-    // }
 }
