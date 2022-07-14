@@ -84,8 +84,12 @@ pub fn init_logging(default_lvl: LevelFilter) {
 
 #[async_recursion]
 async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
-    let mut commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{})];
+    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{})];
     let list = ListCommand{commands: &commands};
+    if list.accept(frames) {
+        list.handle(socket).await;
+        return;
+    }
     // commands.push(Box::new(list));
     // commands.push(Box::new(ListCommand{commands: &commands}));
     for c in commands {

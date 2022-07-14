@@ -11,7 +11,7 @@ pub struct ListCommand<'a> {
 }
 
 #[async_trait]
-impl Command for ListCommand<'_> {
+impl<'a> Command for ListCommand<'a> {
     fn accept(&self,frames: &Vec<redis_protocol::resp2::prelude::Frame>) -> bool {
         for frame in frames {
             if frame.is_string() {
