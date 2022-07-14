@@ -1,7 +1,7 @@
 use commands::Command;
 use commands::connection::Ping;
 use commands::server::ListCommand;
-use commands::string::Get;
+use commands::string::{Get, Set};
 use env_logger::Builder;
 use failure::Error;
 use log::{LevelFilter, debug};
@@ -84,7 +84,7 @@ pub fn init_logging(default_lvl: LevelFilter) {
 
 #[async_recursion]
 async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
-    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{})];
+    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{}), Box::new(Set{})];
     let list = ListCommand{commands: &commands};
     if list.accept(frames) {
         list.handle(socket).await;
