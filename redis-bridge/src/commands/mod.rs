@@ -3,7 +3,7 @@ use tokio::net::TcpStream;
 
 pub mod connection;
 pub mod server;
-// pub mod string;
+pub mod string;
 use async_trait::async_trait;
 
 #[async_trait]
@@ -23,4 +23,16 @@ pub trait Command: Send + Sync{
     fn last_key(&self) -> i32;
 
     fn step(&self) -> i32;
+}
+
+fn match_command(match_str: &str, frames: &Vec<redis_protocol::resp2::prelude::Frame>) -> bool {
+    for frame in frames {
+            if frame.is_string() {
+                let str = frame.as_str().unwrap().to_string();
+                if str.to_lowercase() == match_str {
+                    return true;
+                }
+            }
+        }
+        false
 }

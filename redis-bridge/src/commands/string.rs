@@ -1,6 +1,10 @@
 use async_trait::async_trait;
+use bytes::BytesMut;
+use log::debug;
+use redis_protocol::resp2::prelude::{Frame, encode_bytes};
+use tokio::io::AsyncWriteExt;
 
-use super::Command;
+use super::{Command, match_command};
 
 pub struct Get {
 
@@ -9,12 +13,24 @@ pub struct Get {
 #[async_trait]
 impl Command for Get {
     fn accept(&self,frame: &Vec<redis_protocol::resp2::prelude::Frame>) -> bool {
-        false
+        match_command(&self.name(), frame)
     }
     
     
     async fn handle(&self, socket: &mut tokio::net::TcpStream) {
-        todo!()
+        let frame = Frame::BulkString("result..".into());
+        let mut buf = BytesMut::new();
+        
+        let _len = match encode_bytes(&mut buf, &frame) {
+            Ok(l) => l,
+            Err(e) => panic!("Error encoding frame: {:?}", e)
+        };
+        socket
+            .write_all(&buf)
+            .await
+            .expect("failed to write data to socket");
+        
+        debug!("write socket {:#?}", &buf);
     }
 
     fn name(&self) -> String {
@@ -22,22 +38,22 @@ impl Command for Get {
     }
 
     fn arity(&self) -> i32 {
-        todo!()
+        2
     }
 
     fn flag(&self) -> Vec<String>  {
-        todo!()
+        vec!["readonly".to_string(), "fast".to_string()]
     }
 
     fn first_key(&self) -> i32 {
-        todo!()
+        1
     }
 
     fn last_key(&self) -> i32 {
-        todo!()
+        1
     }
 
     fn step(&self) -> i32 {
-        todo!()
+        1
     }
 }
