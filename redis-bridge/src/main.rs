@@ -89,8 +89,6 @@ async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
         list.handle(socket).await;
         return;
     }
-    // commands.push(Box::new(list));
-    // commands.push(Box::new(ListCommand{commands: &commands}));
     for c in commands {
         if c.accept(frames) {
             c.handle(socket).await;
