@@ -1,7 +1,6 @@
 use commands::Command;
 use commands::connection::Ping;
 use commands::server::ListCommand;
-use commands::string::Get;
 use env_logger::Builder;
 use failure::Error;
 use log::{LevelFilter, debug};
