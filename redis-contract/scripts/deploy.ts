@@ -1,4 +1,6 @@
 import { ethers } from "hardhat";
+import fs from "fs";
+const fsPromises = fs.promises;
 
 async function main() {
   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
@@ -20,6 +22,14 @@ async function main() {
   await redis.deployed();
 
   console.log("Redis deployed to:", redis.address);
+  await writeRust(redis.address, ['../redis-bridge/src/address.rs'])
+}
+
+async function writeRust(address: string, files: string[]) {
+  console.log('write ' + address + " to rust " + files);
+  for (const file of files) {
+    await fsPromises.writeFile(file, 'pub const ADDRESS: &str = "' + address + '";\n');
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
