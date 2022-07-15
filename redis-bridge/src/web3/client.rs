@@ -58,6 +58,6 @@ impl Wallet {
     }
 
     pub async fn get(&self, key: &str) -> Result<&str, Error> {
-        Ok("")
+        Ok("fake")
     }
 }
