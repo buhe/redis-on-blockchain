@@ -63,13 +63,13 @@ impl Wallet {
         Ok(())
     }
 
-    pub async fn get(&self, key: &str) -> Result<&str, Error> {
+    pub async fn get(&self, key: &str) -> Result<String, Error> {
          let value: String = self.contract
             .query("get", (key.to_string(), ), self.account, Options::default(), None)
             .await
             .unwrap();
 
         info!("{} get: {}", key, value);
-        Ok("fake")
+        Ok(value)
     }
 }
