@@ -9,6 +9,7 @@ use web3::types::Address;
 use web3::Web3;
 
 use crate::address::ADDRESS;
+const INFURA: &str = "3f433221d3db475db058b3875a617fdd";
 pub struct Wallet {
     contract: Contract<WalletConnect<Http>>,
     account: H160,
@@ -29,7 +30,7 @@ impl Wallet {
 
         client.ensure_session(qr::print_with_url).await?;
 
-        let wc = WalletConnect::new(client, "3f433221d3db475db058b3875a617fdd").unwrap();
+        let wc = WalletConnect::new(client, INFURA).unwrap();
         let web3 = Web3::new(wc);
         
         let accounts = web3.eth().accounts().await?;
