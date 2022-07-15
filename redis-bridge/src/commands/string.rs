@@ -72,7 +72,8 @@ impl Command for Set {
     }
     
     
-    async fn handle(&self, socket: &mut tokio::net::TcpStream, _: &Vec<redis_protocol::resp2::prelude::Frame>, _: &Wallet) {
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, _: &Vec<redis_protocol::resp2::prelude::Frame>, wallet: &Wallet) {
+        wallet.set("", "").await.unwrap();
         let frame = Frame::BulkString("OK".into());
         let mut buf = BytesMut::new();
         

@@ -3,7 +3,7 @@ use anyhow::Error;
 use log::info;
 use walletconnect::transport::WalletConnect;
 use walletconnect::{qr, Client, Metadata, H160};
-use web3::contract::{Contract};
+use web3::contract::{Contract, Options};
 use web3::transports::Http;
 use web3::types::Address;
 use web3::Web3;
@@ -54,10 +54,22 @@ impl Wallet {
     }
 
     pub async fn set(&self, key: &str, value: &str) -> Result<(), Error> {
+         let tx = self.contract
+            .call("set", (key.to_string(), value.to_string()), self.account, Options::default())
+            .await
+            .unwrap();
+
+        info!("set tx is {}", tx);
         Ok(())
     }
 
     pub async fn get(&self, key: &str) -> Result<&str, Error> {
+         let value: String = self.contract
+            .query("get", (key.to_string(), ), None, Options::default(), None)
+            .await
+            .unwrap();
+
+        info!("get: {}", value);
         Ok("fake")
     }
 }
