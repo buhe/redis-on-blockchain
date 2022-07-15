@@ -6,11 +6,13 @@ pub mod server;
 pub mod string;
 use async_trait::async_trait;
 
+use crate::web3::client::Wallet;
+
 #[async_trait]
 pub trait Command: Send + Sync{
     fn accept(&self, frame: &Vec<Frame>) -> bool;
 
-    async fn handle(&self, socket: &mut TcpStream);
+    async fn handle(&self, socket: &mut TcpStream, frames: &Vec<redis_protocol::resp2::prelude::Frame>,  wallet: &Wallet);
 
     fn name(&self) -> String;
 

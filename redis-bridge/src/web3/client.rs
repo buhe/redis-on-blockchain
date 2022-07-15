@@ -7,6 +7,8 @@ use web3::contract::{Contract};
 use web3::transports::Http;
 use web3::types::Address;
 use web3::Web3;
+
+use crate::address::ADDRESS;
 pub struct Wallet {
     contract: Contract<WalletConnect<Http>>,
     account: H160,
@@ -18,7 +20,7 @@ impl Wallet {
             "redis-on-blockchain",
             Metadata {
                 description: "redis on blockchain".into(),
-                url: "https://github.com/nlordell/walletconnect-rs".parse()?,
+                url: "https://rob.buhe.dev".parse()?,
                 icons: vec!["https://avatars0.githubusercontent.com/u/4210206".parse()?],
                 name: "redis on blockchain".into(),
             },
@@ -42,14 +44,20 @@ impl Wallet {
 
         info!("Balance: {}", balance);
 
-        let addr = Address::from_str("0x22fCB380773027B246b0EAfafC1f996938f2eF14")?;
+        let addr = Address::from_str(ADDRESS)?;
 
         info!("Address:\n  https://ropsten.etherscan.io/address/{}", accounts[0]);
         Ok(Self {
             contract: Contract::from_json(web3.eth(), addr, include_bytes!("../abi/contracts/Redis.sol/Redis.json"))?,
             account: accounts[0],
         })
-        
+    }
 
+    pub async fn set(&self, key: &str, value: &str) -> Result<(), Error> {
+        Ok(())
+    }
+
+    pub async fn get(&self, key: &str) -> Result<&str, Error> {
+        Ok("")
     }
 }

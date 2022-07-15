@@ -4,6 +4,8 @@ use log::debug;
 use redis_protocol::resp2::prelude::{Frame, encode_bytes};
 use tokio::io::AsyncWriteExt;
 
+use crate::web3::client::Wallet;
+
 use super::Command;
 
 pub struct ListCommand<'a> {
@@ -25,7 +27,7 @@ impl<'a> Command for ListCommand<'a> {
     }
     
     
-    async fn handle(&self, socket: &mut tokio::net::TcpStream) {
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, _: &Vec<redis_protocol::resp2::prelude::Frame>, _: &Wallet) {
         let mut all: Vec<Frame> = vec![];
         for command in self.commands {
             let mut per_command: Vec<Frame> = vec![];

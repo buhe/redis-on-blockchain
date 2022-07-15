@@ -1,3 +1,5 @@
+use crate::web3::client::Wallet;
+
 use super::Command;
 use bytes::BytesMut;
 use log::debug;
@@ -24,7 +26,7 @@ impl Command for Ping {
         false
     }
 
-    async fn handle(&self, socket: &mut tokio::net::TcpStream) {
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, _: &Vec<redis_protocol::resp2::prelude::Frame>, _: &Wallet) {
         let frame = Frame::BulkString("PONG".into());
         let mut buf = BytesMut::new();
         

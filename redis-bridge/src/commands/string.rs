@@ -4,10 +4,12 @@ use log::debug;
 use redis_protocol::resp2::prelude::{Frame, encode_bytes};
 use tokio::io::AsyncWriteExt;
 
+use crate::web3::client::Wallet;
+
 use super::{Command, match_command};
 
 pub struct Get {
-
+   
 }
 
 #[async_trait]
@@ -17,8 +19,9 @@ impl Command for Get {
     }
     
     
-    async fn handle(&self, socket: &mut tokio::net::TcpStream) {
-        let frame = Frame::BulkString("result..".into());
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, frames: &Vec<redis_protocol::resp2::prelude::Frame>,  wallet: &Wallet) {
+        let value = wallet.get("").await.unwrap().to_string();
+        let frame = Frame::BulkString(value.into());
         let mut buf = BytesMut::new();
         
         let _len = match encode_bytes(&mut buf, &frame) {
@@ -69,7 +72,7 @@ impl Command for Set {
     }
     
     
-    async fn handle(&self, socket: &mut tokio::net::TcpStream) {
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, _: &Vec<redis_protocol::resp2::prelude::Frame>, _: &Wallet) {
         let frame = Frame::BulkString("OK".into());
         let mut buf = BytesMut::new();
         

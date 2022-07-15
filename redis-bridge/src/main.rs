@@ -20,7 +20,6 @@ mod address;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let wallet = Wallet::new().await?;
     // Allow passing an address to listen on as the first argument of this
     // program, but otherwise we'll just set up our TCP listener on
     // 127.0.0.1:8080 for connections.
@@ -48,6 +47,7 @@ async fn main() -> Result<(), Error> {
         // which will allow all of our clients to be processed concurrently.
 
         tokio::spawn(async move {
+            let wallet = Wallet::new().await.unwrap();
             let mut buf = vec![0; 1024];
 
             // In a loop, read data from the socket and write the data back.
@@ -70,7 +70,7 @@ async fn main() -> Result<(), Error> {
                 debug!("Parsed frame {:?} and consumed {} bytes", &frame, consumed);
                 match &frame {
                     Frame::Array(array) => {
-                        handle_array(array, &mut socket).await;
+                        handle_array(array, &wallet,&mut socket).await;
                     },
                     _ => unreachable!(),
                 }
@@ -88,16 +88,16 @@ pub fn init_logging(default_lvl: LevelFilter) {
 
 
 #[async_recursion]
-async fn handle_array(frames: &Vec<Frame>, socket: &mut TcpStream) {
+async fn handle_array(frames: &Vec<Frame>, wallet: &Wallet, socket: &mut TcpStream) {
     let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{}), Box::new(Set{})];
     let list = ListCommand{commands: &commands};
     if list.accept(frames) {
-        list.handle(socket).await;
+        list.handle(socket, frames, wallet).await;
         return;
     }
     for c in commands {
         if c.accept(frames) {
-            c.handle(socket).await;
+            c.handle(socket, frames, wallet).await;
         }
     }
 }
