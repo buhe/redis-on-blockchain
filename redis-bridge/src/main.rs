@@ -3,7 +3,7 @@ use commands::connection::Ping;
 use commands::server::ListCommand;
 use commands::string::{Get, Set};
 use env_logger::Builder;
-use failure::Error;
+use anyhow::Error;
 use log::{LevelFilter, debug};
 use tokio::io::{AsyncReadExt};
 use tokio::net::{TcpListener, TcpStream};

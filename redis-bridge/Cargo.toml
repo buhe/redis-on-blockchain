@@ -12,7 +12,7 @@ walletconnect = { git = "https://github.com/buhe/walletconnect-rs", features = [
 tokio = { version = "1", features = ["full"] }
 web3 = "0.18.0"
 futures = "0.3"
-failure = "0.1"
+anyhow = "1.0"
 redis-protocol = "4.1.0"
 bytes = "1.1"
 async-recursion = "1.0.0"

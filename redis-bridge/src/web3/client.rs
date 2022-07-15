@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use failure::Error;
+use anyhow::Error;
 use log::info;
 use walletconnect::transport::WalletConnect;
 use walletconnect::{qr, Client, Metadata, H160};
