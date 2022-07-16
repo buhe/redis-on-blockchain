@@ -119,3 +119,110 @@ impl Command for Set {
         1
     }
 }
+
+pub struct Scan {
+   
+}
+
+#[async_trait]
+impl Command for Scan {
+    fn accept(&self,frame: &Vec<redis_protocol::resp2::prelude::Frame>) -> bool {
+        match_command(&self.name(), frame)
+    }
+    
+    
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, frames: &Vec<redis_protocol::resp2::prelude::Frame>,  wallet: &Wallet) {
+        let mut frames = vec![];
+        // let frame = Frame::BulkString(value.into());
+        let mut buf = BytesMut::new();
+        frames.push(Frame::BulkString("0".into()));
+        frames.push(Frame::Array([Frame::BulkString("fake1".into())].to_vec()));
+        
+        let _len = match encode_bytes(&mut buf, &Frame::Array(frames)) {
+            Ok(l) => l,
+            Err(e) => panic!("Error encoding frame: {:?}", e)
+        };
+        socket
+            .write_all(&buf)
+            .await
+            .expect("failed to write data to socket");
+        
+        debug!("write socket {:#?}", &buf);
+    }
+
+    fn name(&self) -> String {
+       "scan".to_string()
+    }
+
+    fn arity(&self) -> i32 {
+        2
+    }
+
+    fn flag(&self) -> Vec<String>  {
+        vec!["readonly".to_string(), "fast".to_string()]
+    }
+
+    fn first_key(&self) -> i32 {
+        1
+    }
+
+    fn last_key(&self) -> i32 {
+        1
+    }
+
+    fn step(&self) -> i32 {
+        1
+    }
+}
+
+pub struct Type {
+   
+}
+
+#[async_trait]
+impl Command for Type {
+    fn accept(&self,frame: &Vec<redis_protocol::resp2::prelude::Frame>) -> bool {
+        match_command(&self.name(), frame)
+    }
+    
+    
+    async fn handle(&self, socket: &mut tokio::net::TcpStream, frames: &Vec<redis_protocol::resp2::prelude::Frame>,  wallet: &Wallet) {
+        let frame = Frame::SimpleString("none".into());
+        let mut buf = BytesMut::new();
+        
+        let _len = match encode_bytes(&mut buf, &frame) {
+            Ok(l) => l,
+            Err(e) => panic!("Error encoding frame: {:?}", e)
+        };
+        socket
+            .write_all(&buf)
+            .await
+            .expect("failed to write data to socket");
+        
+        debug!("write socket {:#?}", &buf);
+    }
+
+    fn name(&self) -> String {
+       "type".to_string()
+    }
+
+    fn arity(&self) -> i32 {
+        2
+    }
+
+    fn flag(&self) -> Vec<String>  {
+        vec!["readonly".to_string(), "fast".to_string()]
+    }
+
+    fn first_key(&self) -> i32 {
+        1
+    }
+
+    fn last_key(&self) -> i32 {
+        1
+    }
+
+    fn step(&self) -> i32 {
+        1
+    }
+}

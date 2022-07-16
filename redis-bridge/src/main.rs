@@ -1,10 +1,10 @@
 use commands::Command;
 use commands::connection::Ping;
 use commands::server::ListCommand;
-use commands::string::{Get, Set};
+use commands::string::{Get, Set, Scan, Type};
 use env_logger::Builder;
 use anyhow::Error;
-use log::{LevelFilter, debug};
+use log::{LevelFilter, info};
 use tokio::io::{AsyncReadExt};
 use tokio::net::{TcpListener, TcpStream};
 use redis_protocol::resp2::prelude::*;
@@ -23,7 +23,7 @@ async fn main() -> Result<(), Error> {
     // Allow passing an address to listen on as the first argument of this
     // program, but otherwise we'll just set up our TCP listener on
     // 127.0.0.1:8080 for connections.
-    init_logging(LevelFilter::Info);
+    init_logging(LevelFilter::Debug);
     let addr = env::args()
         .nth(1)
         .unwrap_or_else(|| "127.0.0.1:6379".to_string());
@@ -67,7 +67,7 @@ async fn main() -> Result<(), Error> {
                     Ok(None) => panic!("Incomplete frame."),
                     Err(e) => panic!("Error parsing bytes: {:?}", e)
                 };
-                debug!("Parsed frame {:?} and consumed {} bytes", &frame, consumed);
+                info!("Parsed frame {:?} and consumed {} bytes", &frame, consumed);
                 match &frame {
                     Frame::Array(array) => {
                         handle_array(array, &wallet,&mut socket).await;
@@ -89,7 +89,7 @@ pub fn init_logging(default_lvl: LevelFilter) {
 
 #[async_recursion]
 async fn handle_array(frames: &Vec<Frame>, wallet: &Wallet, socket: &mut TcpStream) {
-    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{}), Box::new(Set{})];
+    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{}), Box::new(Set{}), Box::new(Scan{}), Box::new(Type{})];
     let list = ListCommand{commands: &commands};
     if list.accept(frames) {
         list.handle(socket, frames, wallet).await;

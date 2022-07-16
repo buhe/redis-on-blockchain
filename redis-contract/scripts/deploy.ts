@@ -41,11 +41,11 @@ async function main() {
 
   console.log("value is " + val);
 
-  await redis.setGreeting('hi bugu');
+  // await redis.setGreeting('hi bugu');
 
-  await delay(120 * 1000);
+  // await delay(120 * 1000);
 
-  console.log("greet:", await redis.greet());
+  // console.log("greet:", await redis.greet());
 }
 
 async function writeRust(address: string, files: string[]) {
