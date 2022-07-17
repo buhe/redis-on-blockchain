@@ -1,12 +1,12 @@
 use async_trait::async_trait;
 use bytes::BytesMut;
-use log::debug;
+use log::{info};
 use redis_protocol::resp2::prelude::{Frame, encode_bytes};
 use tokio::io::AsyncWriteExt;
 
 use crate::web3::client::Wallet;
 
-use super::Command;
+use super::{Command};
 
 pub struct ListCommand<'a> {
     pub commands: &'a Vec<Box<dyn Command>>
@@ -55,7 +55,7 @@ impl<'a> Command for ListCommand<'a> {
             .await
             .expect("failed to write data to socket");
         
-        debug!("write socket {:#?}", &buf);
+        info!("write socket {:#?}", &buf);
         
     }
 

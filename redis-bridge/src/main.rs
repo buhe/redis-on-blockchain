@@ -1,7 +1,7 @@
 use commands::Command;
 use commands::connection::Ping;
-use commands::server::ListCommand;
-use commands::string::{Get, Set, Scan, Type};
+use commands::server::{ListCommand};
+use commands::string::{Get, Set};
 use env_logger::Builder;
 use anyhow::Error;
 use log::{LevelFilter, info};
@@ -23,7 +23,7 @@ async fn main() -> Result<(), Error> {
     // Allow passing an address to listen on as the first argument of this
     // program, but otherwise we'll just set up our TCP listener on
     // 127.0.0.1:8080 for connections.
-    init_logging(LevelFilter::Debug);
+    init_logging(LevelFilter::Info);
     let addr = env::args()
         .nth(1)
         .unwrap_or_else(|| "127.0.0.1:6379".to_string());
@@ -89,7 +89,7 @@ pub fn init_logging(default_lvl: LevelFilter) {
 
 #[async_recursion]
 async fn handle_array(frames: &Vec<Frame>, wallet: &Wallet, socket: &mut TcpStream) {
-    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{}), Box::new(Set{}), Box::new(Scan{}), Box::new(Type{})];
+    let commands: Vec<Box<dyn Command>> = vec![Box::new(Ping{}), Box::new(Get{}), Box::new(Set{})];
     let list = ListCommand{commands: &commands};
     if list.accept(frames) {
         list.handle(socket, frames, wallet).await;
