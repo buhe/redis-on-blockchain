@@ -1,5 +1,5 @@
-use async_trait::async_trait;
 use bytes::BytesMut;
+use async_trait::async_trait;
 use log::{info};
 use redis_protocol::resp2::prelude::{Frame, encode_bytes};
 use tokio::io::AsyncWriteExt;
