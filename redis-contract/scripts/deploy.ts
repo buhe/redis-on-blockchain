@@ -2,62 +2,72 @@ import { ethers } from "hardhat";
 import fs from "fs";
 const fsPromises = fs.promises;
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function main() {
-  // const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  // const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  // const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+    // const currentTimestampInSeconds = Math.round(Date.now() / 1000);
+    // const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
+    // const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
 
-  // const lockedAmount = ethers.utils.parseEther("1");
+    // const lockedAmount = ethers.utils.parseEther("1");
 
-  // const Lock = await ethers.getContractFactory("Lock");
-  // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+    // const Lock = await ethers.getContractFactory("Lock");
 
-  // await lock.deployed();
+    // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
 
-  // console.log("Lock with 1 ETH deployed to:", lock.address);
+    // await lock.deployed();
 
-  const [deployer] = await ethers.getSigners();
+    // console.log("Lock with 1 ETH deployed to:", lock.address);
 
-  console.log("Deploying contracts with the account:", deployer.address);
+    const [deployer] = await ethers.getSigners();
 
-  console.log("Account balance:", (await deployer.getBalance()).toString());
+    console.log("Deploying contracts with the account:", deployer.address);
 
-  const Redis = await ethers.getContractFactory("Redis");
-  const redis = await Redis.deploy();
+    console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  await redis.deployed();
+    const Redis = await ethers.getContractFactory("Redis");
+    const redis = await Redis.deploy();
 
-  console.log("Redis deployed to:", redis.address);
-  await writeRust(redis.address, ['../redis-bridge/src/address.rs']);
+    await redis.deployed();
 
-  await redis.set("key", "rob");
-  // wait block created
-  await delay(120 * 1000);
 
-  const val = await redis.get("key");
+    console.log("Redis deployed to:", redis.address);
+    await writeRust(redis.address, ['../redis-bridge/src/address.rs']);
 
-  console.log("value is " + val);
+    await redis.set("key", "rob");
+    // wait block created
+    await delay(120 * 1000);
 
-  // await redis.setGreeting('hi bugu');
+    const val = await redis.get("key");
 
-  // await delay(120 * 1000);
+    console.log("value is " + val);
 
-  // console.log("greet:", await redis.greet());
+    await redis.hset("111", "allowance", "12");
+
+    await delay(120 * 1000);
+
+    const hval = await redis.hget("111", "allowance");
+
+    console.log("map value is " + hval);
+
+    // await redis.setGreeting('hi bugu');
+
+    // await delay(120 * 1000);
+
+    // console.log("greet:", await redis.greet());
 }
 
 async function writeRust(address: string, files: string[]) {
-  console.log('write ' + address + " to rust " + files);
-  for (const file of files) {
-    await fsPromises.writeFile(file, 'pub const ADDRESS: &str = "' + address + '";\n');
-  }
+    console.log('write ' + address + " to rust " + files);
+    for (const file of files) {
+        await fsPromises.writeFile(file, 'pub const ADDRESS: &str = "' + address + '";\n');
+    }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    console.error(error);
+    process.exitCode = 1;
 });

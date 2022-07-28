@@ -24,8 +24,19 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "greet",
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "map_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      }
+    ],
+    "name": "hget",
     "outputs": [
       {
         "internalType": "string",
@@ -34,6 +45,29 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "map_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "hset",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -50,19 +84,6 @@
       }
     ],
     "name": "set",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_greeting",
-        "type": "string"
-      }
-    ],
-    "name": "setGreeting",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

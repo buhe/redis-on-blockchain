@@ -2,6 +2,7 @@ use commands::Command;
 use commands::connection::Ping;
 use commands::server::{ListCommand};
 use commands::string::{Get, Set};
+
 use env_logger::Builder;
 use anyhow::Error;
 use log::{LevelFilter, info};
